@@ -6,6 +6,44 @@ require_once(__DIR__ . "/../../../src/SQL/Maker/InsertMulti.php");
 
 final class SQL_Maker_InsertMulti_Test extends \PHPUnit_Framework_TestCase
 {
+    function test_bindRow__in_case_success()
+    {
+        $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array('foo', 'bar', 'baz')));
+        $this->assertEquals(count($builder->binds()), 0, "binds should be empty");
+        $builder->bindRow(array(
+            'foo' => 'foo',
+            'bar' => 'bar',
+            'baz' => 'baz',
+        ));
+        $this->assertEquals(count($builder->binds()), 3, "binds should not be empty");
+    }
+
+    /**
+     *
+     * @expectedException InvalidArgumentException
+     */
+    function test_bindRow__in_case_wronge_number_of_fields()
+    {
+        $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array('foo', 'bar', 'baz')));
+        $builder->bindRow(array(
+            'foo' => 'foo',
+            'bar' => 'bar',
+        ));
+        $this->assertTrue(false, "should raise InvalidArgumentException");
+    }
+
+    function test_bindRow__in_case_null_of_fields()
+    {
+        $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array('foo', 'bar', 'baz')));
+        $this->assertEquals(count($builder->binds()), 0, "binds should be empty");
+        $builder->bindRow(array(
+            'foo' => 'foo',
+            'bar' => 'bar',
+            'baz' => null,
+        ));
+        $this->assertEquals(count($builder->binds()), 3, "binds should not be empty");
+    }
+
     function test_functional__in_case_simple(){
         $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array('foo', 'bar', 'baz')));
         for ( $i = 1; $i <= 3; $i++ ) {

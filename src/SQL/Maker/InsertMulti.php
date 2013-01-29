@@ -8,7 +8,7 @@
  *      foreach ( $data as $row ) {
  *          $builder->bindRow(array(
  *              'id'            => $row['id'],
- *              'name'          => $row['id'],
+ *              'name'          => $row['name'],
  *              'created_at'    => $row['created_at'],
  *          );
  *      }
