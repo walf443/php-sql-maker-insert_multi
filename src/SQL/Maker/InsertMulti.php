@@ -31,14 +31,14 @@
  *      $pdo->execute();
  */
 class SQL_Maker_InsertMulti {
-    private $quoteChar;
+    private $quoteIdentifierChar;
     private $tableName;
     private $fields;
     private $binds;
 
     function __construct($tableName, $options) {
         $default_options = array(
-            'quoteChar' => '`',
+            'quoteIdentifierChar' => '`',
         );
         $options += $default_options;
 
@@ -50,7 +50,7 @@ class SQL_Maker_InsertMulti {
         }
         $this->fields = $options['fields'];
 
-        $this->quoteChar = $options['quoteChar'];
+        $this->quoteIdentifierChar = $options['quoteIdentifierChar'];
     }
 
     public function bindRow(array $row) {
@@ -83,12 +83,12 @@ class SQL_Maker_InsertMulti {
             throw new \LogicException("Invalid count of binds: got " . $bindCount . ", but expected " . $fieldCount . " * " . $rowCount . " = " . $fieldCount * $rowCount);
         }
 
-        $result = "INSERT INTO " . $this->quote($this->tableName) . " ";
+        $result = "INSERT INTO " . $this->quoteIdentifier($this->tableName) . " ";
         $quoted_fields = array();
 
         // generate fields expression
         foreach ( $this->fields as $field ) {
-            array_push($quoted_fields, $this->quote($field));
+            array_push($quoted_fields, $this->quoteIdentifier($field));
         }
         $result .= "(" . implode(", ", $quoted_fields) . ")";
         $result .= " VALUES ";
@@ -108,8 +108,11 @@ class SQL_Maker_InsertMulti {
         return $result;
     }
 
-    public function quote($arg)
+    public function quoteIdentifier($arg)
     {
-        return $this->quoteChar . $arg . $this->quoteChar;
+        if ( strpos($arg, $this->quoteIdentifierChar) !== false ) {
+            throw new InvalidArgumentException("Can't include quoteIdentifierChar to identifier");
+        }
+        return $this->quoteIdentifierChar . $arg . $this->quoteIdentifierChar;
     }
 }

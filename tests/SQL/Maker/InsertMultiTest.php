@@ -57,4 +57,18 @@ final class SQL_Maker_InsertMulti_Test extends \PHPUnit_Framework_TestCase
         $this->assertSame(3*3, count($builder->binds()), "binds count OK");
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    function test_quoteIdentifier__in_case_contains_quoteIdentifierChar(){
+        $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array('foo', 'bar', 'baz')));
+        $builder->quoteIdentifier("`");
+        $this->assertTrue(false, "should raise InvalidArgumentException");
+    }
+
+    function test_quoteIdentifier__in_case_normal(){
+        $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array('foo', 'bar', 'baz')));
+        $result = $builder->quoteIdentifier("test");
+        $this->assertSame($result, "`test`", "should quoted.");
+    }
 }
