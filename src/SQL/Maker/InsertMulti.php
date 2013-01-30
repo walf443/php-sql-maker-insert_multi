@@ -16,6 +16,8 @@
  *      $stmt = $pdo->prepare($builer->toQuery());
  *      $pdo->execute($builer->binds());
  *
+ *      // OR
+ *
  *      // you can also use bindParam.
  *      $builer = new SQL_Maker_InsertMulti("your_table", array('fields' => array(
  *          'id' => \PDO::PARAM_INT, 
