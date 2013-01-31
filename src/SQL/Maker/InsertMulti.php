@@ -41,6 +41,7 @@ class SQL_Maker_InsertMulti {
     function __construct($tableName, $options) {
         $default_options = array(
             'quoteIdentifierChar' => '`',
+            'appendCallerComment' => true,
         );
         $options += $default_options;
 
@@ -53,6 +54,7 @@ class SQL_Maker_InsertMulti {
         $this->fields = $options['fields'];
 
         $this->quoteIdentifierChar = $options['quoteIdentifierChar'];
+        $this->appendCallerComment = $options['appendCallerComment'];
     }
 
     public function bindRow(array $row) {
@@ -107,7 +109,28 @@ class SQL_Maker_InsertMulti {
         }
         $result .= implode(", ", $row_strs);
 
+        if ( $this->appendCallerComment ) {
+            $result = $this->appendCallertoComment($result);
+        }
         return $result;
+    }
+
+    public function appendCallertoComment($sql)
+    {
+        $callers = debug_backtrace(false);
+        $traces = array();
+        foreach ( $callers as $caller ) {
+            if ( count($traces) >= 2 ) {
+                break;
+            }
+            if ( isset($caller["file"]) ) {
+                array_push($traces, $caller["file"] . ":" . $caller["line"]);
+            }
+        }
+
+        // Because calling from toQuery, take second trace as caller.
+        $sql .= " /* generated from " . $traces[1] . " by SQL_Maker_InsertMulti */";
+        return $sql;
     }
 
     public function quoteIdentifier($arg)

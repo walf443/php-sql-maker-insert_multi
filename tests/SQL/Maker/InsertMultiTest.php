@@ -45,7 +45,7 @@ final class SQL_Maker_InsertMulti_Test extends \PHPUnit_Framework_TestCase
     }
 
     function test_functional__in_case_simple(){
-        $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array('foo', 'bar', 'baz')));
+        $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array('foo', 'bar', 'baz'), 'appendCallerComment' => false));
         for ( $i = 1; $i <= 3; $i++ ) {
             $builder->bindRow(array(
                 'foo' => $i * 1,
