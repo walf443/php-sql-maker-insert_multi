@@ -27,7 +27,7 @@ class SQL_Maker_InsertMulti {
     function __construct($tableName, $options) {
         $default_options = array(
             'quoteIdentifierChar' => '`',
-            'appendCallerComment' => true,
+            'appendCallerToComment' => true,
             'prefix' => 'INSERT INTO', // you can set "INSERT IGNORE INTO" or "REPLACE INTO"
         );
         $options += $default_options;
@@ -41,7 +41,7 @@ class SQL_Maker_InsertMulti {
         $this->fields = $options['fields'];
 
         $this->quoteIdentifierChar = $options['quoteIdentifierChar'];
-        $this->appendCallerComment = $options['appendCallerComment'];
+        $this->appendCallerToComment = $options['appendCallerToComment'];
         $this->prefix = $options['prefix'];
     }
 
@@ -97,13 +97,13 @@ class SQL_Maker_InsertMulti {
         }
         $result .= implode(", ", $row_strs);
 
-        if ( $this->appendCallerComment ) {
-            $result = $this->appendCallertoComment($result);
+        if ( $this->appendCallerToComment ) {
+            $result = $this->appendCallerToComment($result);
         }
         return $result;
     }
 
-    public function appendCallertoComment($sql)
+    public function appendCallerToComment($sql)
     {
         $callers = debug_backtrace(false);
         $traces = array();
