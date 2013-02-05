@@ -1,0 +1,44 @@
+SQL_Maker_InsertMulti
+===============
+
+What is it?
+---------------
+
+generate multi insert SQL for MySQL.
+
+Example
+---------
+
+	require_once('path/to/libdir/src/SQL/Maker/InsertMulti.php');
+	$builder = new SQL_Maker_InsertMulti("your_table", array('fields' => array('id', 'name', 'created_at'));
+	foreach ( $data as $row ) {
+		$builder->bindRow(array(
+			'id'            => $row['id'],
+			'name'          => $row['name'],
+			'created_at'    => $row['created_at'],
+		);
+	}
+	$stmt = $pdo->prepare($builer->toQuery());
+	$pdo->execute($builer->binds());
+
+Why this module is useful
+--------------------------
+
+Key concept of this library is followings:
+
+ * Don't handle connection.
+ * Don't handle query
+ * Easy to write multi insert code.
+
+ There are many libraries already for this porpose with connection.
+ But, I'd like to handle connection and query carefully.
+ So, I wrote it.
+
+ Since it only require "prepare" and "binds" API, you might be able to apply this library with many PDO's wrapper.
+
+Author
+---------
+
+Copyright (C) 2013 Keiji Yoshimi
+
+This library inspired from perl's library: SQL::Maker.
