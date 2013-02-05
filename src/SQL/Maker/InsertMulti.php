@@ -16,21 +16,6 @@
  *      $stmt = $pdo->prepare($builer->toQuery());
  *      $pdo->execute($builer->binds());
  *
- *      // OR
- *
- *      // you can also use bindParam.
- *      $builer = new SQL_Maker_InsertMulti("your_table", array('fields' => array(
- *          'id' => \PDO::PARAM_INT, 
- *          'name' => \PDO::PARAM_STRING, 
- *          'created_at' => \PDO::PARAM_STRING,
- *      ));
- *      foreach ( $data as $row ) {
- *          $builer->bindRow($row);
- *      }
- *
- *      $stmt = $pdo->prepare($builer->toQuery());
- *      $builer->bindParams($stmt);
- *      $pdo->execute();
  */
 class SQL_Maker_InsertMulti {
     private $quoteIdentifierChar;
