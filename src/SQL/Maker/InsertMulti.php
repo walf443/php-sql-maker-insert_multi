@@ -22,11 +22,13 @@ class SQL_Maker_InsertMulti {
     private $tableName;
     private $fields;
     private $binds;
+    private $prefix;
 
     function __construct($tableName, $options) {
         $default_options = array(
             'quoteIdentifierChar' => '`',
             'appendCallerComment' => true,
+            'prefix' => 'INSERT INTO', // you can set "INSERT IGNORE INTO" or "REPLACE INTO"
         );
         $options += $default_options;
 
@@ -40,6 +42,7 @@ class SQL_Maker_InsertMulti {
 
         $this->quoteIdentifierChar = $options['quoteIdentifierChar'];
         $this->appendCallerComment = $options['appendCallerComment'];
+        $this->prefix = $options['prefix'];
     }
 
     public function bindRow(array $row) {
@@ -72,7 +75,7 @@ class SQL_Maker_InsertMulti {
             throw new \LogicException("Invalid count of binds: got " . $bindCount . ", but expected " . $fieldCount . " * " . $rowCount . " = " . $fieldCount * $rowCount);
         }
 
-        $result = "INSERT INTO " . $this->quoteIdentifier($this->tableName) . " ";
+        $result = $this->prefix . " " . $this->quoteIdentifier($this->tableName) . " ";
         $quoted_fields = array();
 
         // generate fields expression
