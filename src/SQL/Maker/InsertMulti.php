@@ -16,6 +16,23 @@
  *      $stmt = $pdo->prepare($builer->toQuery());
  *      $pdo->execute($builer->binds());
  *
+ *      // with bindValue.
+ *      $builder = new SQL_Maker_InsertMulti("your_table", array('fields' => array(
+ *          'id' => \PDO::PARAM_INT,
+ *          'name'  => \PDO::PARAM_STR,
+ *          'created_at' => \PDO::PARAM_STR,
+ *      ));
+ *      foreach ( $data as $row ) {
+ *          $builder->bindRow(array(
+ *              'id'            => $row['id'],
+ *              'name'          => $row['name'],
+ *              'created_at'    => $row['created_at'],
+ *          );
+ *      }
+ *
+ *      $stmt = $pdo->prepare($builer->toQuery());
+ *      $builer->bindValues($stmt);
+ *      $pdo->execute();
  */
 class SQL_Maker_InsertMulti {
     private $quoteIdentifierChar;
@@ -110,6 +127,26 @@ class SQL_Maker_InsertMulti {
             $result = $this->appendCallerToComment($result);
         }
         return $result;
+    }
+
+    public function bindValues($pdoStmt)
+    {
+        if ( isset($this->fields[0]) ) {
+            throw new \LogicException("you should specify bindValue parameter to fields on constructor.");
+        }
+        $fieldCount = count($this->fields());
+        $bindParamIndexOf = array();
+        $index = 0;
+        foreach ( $this->fields() as $field => $bindParam ) {
+            $bindParamIndexOf[$index] = $bindParam;
+            $index++;
+        }
+        $i = 0;
+        foreach ( $this->binds() as $bind ) {
+            $bindValue = $bindParamIndexOf[$i % $fieldCount];
+            $pdoStmt->bindValue($i + 1, $bind, $bindValue);
+            $i++;
+        }
     }
 
     public function appendCallerToComment($sql)
