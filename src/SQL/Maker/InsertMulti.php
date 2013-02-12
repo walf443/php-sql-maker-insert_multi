@@ -46,7 +46,7 @@ class SQL_Maker_InsertMulti {
     }
 
     public function bindRow(array $row) {
-        foreach ( $this->fields as $field ) {
+        foreach ( $this->fields() as $field ) {
             if ( !array_key_exists($field, $row) ) {
                 throw new InvalidArgumentException("\$row should have '$field' field");
             } else {
@@ -55,6 +55,15 @@ class SQL_Maker_InsertMulti {
         }
 
         return true;
+    }
+
+    public function fields()
+    {
+        if ( isset($this->fields[0]) ) {
+            return $this->fields;
+        } else {
+           return array_keys($this->fields);
+        }
     }
 
     public function binds()
@@ -69,7 +78,7 @@ class SQL_Maker_InsertMulti {
         if ( $bindCount === 0 ) {
             throw new \LogicException("There are no binds");
         }
-        $fieldCount = count($this->fields);
+        $fieldCount = count($this->fields());
         $rowCount = $bindCount / $fieldCount;
         if ( $bindCount % $fieldCount !== 0 ) {
             throw new \LogicException("Invalid count of binds: got " . $bindCount . ", but expected " . $fieldCount . " * " . $rowCount . " = " . $fieldCount * $rowCount);
@@ -79,7 +88,7 @@ class SQL_Maker_InsertMulti {
         $quoted_fields = array();
 
         // generate fields expression
-        foreach ( $this->fields as $field ) {
+        foreach ( $this->fields() as $field ) {
             array_push($quoted_fields, $this->quoteIdentifier($field));
         }
         $result .= "(" . implode(", ", $quoted_fields) . ")";
@@ -87,9 +96,9 @@ class SQL_Maker_InsertMulti {
         
         // generate value expression
         $row_strs = array();
-        for ($i = 0; $i < (count($this->binds) / count($this->fields)); $i++ ) {
+        for ($i = 0; $i < ( $bindCount / $fieldCount ); $i++ ) {
             $row = array();
-            for ($j = 0; $j < count($this->fields); $j++ ) {
+            for ($j = 0; $j < $fieldCount; $j++ ) {
                 array_push($row, '?');
             }
             $row_str = "(" . implode(", ", $row) . ")";

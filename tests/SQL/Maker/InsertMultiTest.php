@@ -15,6 +15,24 @@ final class SQL_Maker_InsertMulti_Test extends \PHPUnit_Framework_TestCase
             'bar' => 'bar',
             'baz' => 'baz',
         ));
+        $this->assertEquals(count($builder->fields()), 3, "fields should not be empty");
+        $this->assertEquals(count($builder->binds()), 3, "binds should not be empty");
+    }
+
+    function test_bindRow__in_case_success_with_bindValue()
+    {
+        $builder = new SQL_Maker_InsertMulti('example_table', array('fields' => array(
+            'foo'   => \PDO::PARAM_STR,
+            'bar'   => \PDO::PARAM_INT,
+            'baz'   => \PDO::PARAM_INT,
+        )));
+        $this->assertEquals(count($builder->fields()), 3, "fields should not be empty");
+        $this->assertEquals(count($builder->binds()), 0, "binds should be empty");
+        $builder->bindRow(array(
+            'foo' => 'foo',
+            'bar' => 'bar',
+            'baz' => 'baz',
+        ));
         $this->assertEquals(count($builder->binds()), 3, "binds should not be empty");
     }
 
