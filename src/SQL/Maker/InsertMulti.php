@@ -14,7 +14,7 @@
  *      }
  *
  *      $stmt = $pdo->prepare($builer->toQuery());
- *      $pdo->execute($builer->binds());
+ *      $stmt->execute($builer->binds());
  *
  *      // with bindValue.
  *      $builder = new SQL_Maker_InsertMulti("your_table", array('fields' => array(
@@ -32,7 +32,7 @@
  *
  *      $stmt = $pdo->prepare($builer->toQuery());
  *      $builer->bindValues($stmt);
- *      $pdo->execute();
+ *      $stmt->execute();
  */
 class SQL_Maker_InsertMulti {
     private $quoteIdentifierChar;

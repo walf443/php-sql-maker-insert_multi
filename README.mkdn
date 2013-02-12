@@ -19,7 +19,25 @@ Example
 		);
 	}
 	$stmt = $pdo->prepare($builer->toQuery());
-	$pdo->execute($builer->binds());
+	$stmt->execute($builer->binds());
+
+	// in case with bindValue
+	require_once('path/to/libdir/src/SQL/Maker/InsertMulti.php');
+	$builder = new SQL_Maker_InsertMulti("your_table", array('fields' => array(
+		'id' => \PDO::PARAM_INT,
+		'name' => \PDO::PARAM_STR,
+		'created_at' => \PDO::PARAM_STR,
+	));
+	foreach ( $data as $row ) {
+		$builder->bindRow(array(
+			'id'            => $row['id'],
+			'name'          => $row['name'],
+			'created_at'    => $row['created_at'],
+		);
+	}
+	$stmt = $pdo->prepare($builer->toQuery());
+	$builer->bindValues($stmt);
+	$stmt->execute();
 
 Why this module is useful
 --------------------------
