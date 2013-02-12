@@ -137,7 +137,7 @@ class SQL_Maker_InsertMulti {
         $fieldCount = count($this->fields());
         $bindParamIndexOf = array();
         $index = 0;
-        foreach ( $this->fields() as $field => $bindParam ) {
+        foreach ( $this->fields as $field => $bindParam ) {
             $bindParamIndexOf[$index] = $bindParam;
             $index++;
         }
